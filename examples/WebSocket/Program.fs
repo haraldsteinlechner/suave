@@ -23,10 +23,10 @@ let ws (webSocket : WebSocket) (context: HttpContext) =
 
     while loop do
       // the server will wait for a message to be received without blocking the thread
-      let msg = webSocket.read() |> Async.RunSynchronously
+      let! msg = webSocket.read() //|> Async.RunSynchronously
 
       match msg with
-        | Choice1Of2 msg -> 
+        | msg -> //Choice1Of2 msg -> 
       
           match msg with
           // the message has type (Opcode * byte [] * bool)
@@ -49,7 +49,7 @@ let ws (webSocket : WebSocket) (context: HttpContext) =
               |> ByteSegment
 
             // the `send` function sends a message back to the client
-            webSocket.send Text byteResponse true |> Async.RunSynchronously
+            do! webSocket.send Text byteResponse true  //|> Async.RunSynchronously
 
           | (Close, _, _) ->
             let emptyResponse = [||] |> ByteSegment
