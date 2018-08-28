@@ -59,8 +59,8 @@ let ws (webSocket : WebSocket) (context: HttpContext) =
             loop <- false
 
           | _ -> ()
-        | _ ->
-          printfn "error"
+        | c ->
+          printfn "error: %A" c
     }
 
 /// An example of explictly fetching websocket errors and handling them in your codebase.

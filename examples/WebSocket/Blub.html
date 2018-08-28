@@ -10,16 +10,24 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script>
-  for(var i=0;i<30;i++)
+  var startup = performance.now();
+  var clients =  32;
+  var lurkedCount = 0;
+  for(var i=0;i<clients;i++)
   {
 	(function() {
         var catpured = i;   
         setTimeout(function() {
             	var lurker = new WebSocket('ws:///localhost:8080/websocket');
 				lurker.onopen = function (_) {
+					lurkedCount++;
+					if(lurkedCount==(clients-1))
+					{
+						console.warn("startup for " + clients + " clients took: " + (performance.now() - startup) + "ms.");
+					}
 					lurker.onmessage = function (m){
 						//console.log("lurked" + catpured);
-						setTimeout(function () { lurker.send("hello"); },1000);
+						setTimeout(function () { lurker.send("hello"); },1100);
 					};
 					lurker.send("sjadf");
 				};
@@ -28,6 +36,7 @@
 	
   }
   var lastTime = performance.now();
+  
   var frequent = new WebSocket('ws:///localhost:8080/websocket');
   var messageCount = 0;
   var avg = performance.now();
