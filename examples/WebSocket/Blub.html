@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="description" content="Webpage description goes here" />
+  <meta charset="utf-8">
+  <title>Change_me</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script>
+  for(var i=0;i<30;i++)
+  {
+	(function() {
+        var catpured = i;   
+        setTimeout(function() {
+            	var lurker = new WebSocket('ws:///localhost:8080/websocket');
+				lurker.onopen = function (_) {
+					lurker.onmessage = function (m){
+						//console.log("lurked" + catpured);
+						setTimeout(function () { lurker.send("hello"); },1000);
+					};
+					lurker.send("sjadf");
+				};
+        }, 1);
+    })();
+	
+  }
+  var lastTime = performance.now();
+  var frequent = new WebSocket('ws:///localhost:8080/websocket');
+  var messageCount = 0;
+  var avg = performance.now();
+
+  frequent.onopen = function (_) {
+	frequent.onmessage = function (m) {
+		messageCount++;
+		var now = performance.now();
+		if(messageCount%100 == 0)
+		{
+			var windowDiff = now - avg;
+			avg = now;
+			var info = document.getElementById('info');
+			info.innerHTML = "average pingpong time: " + (windowDiff / 100.0);
+		}
+		var diff = now - lastTime;
+		lastTime = now;
+		if(diff>100.0){
+			console.warn("long iteration " + messageCount + " (took: " + diff + ")");
+		}
+		//console.log(diff);
+		frequent.send("hello");
+	};
+	frequent.send("get this started");
+  };
+  
+
+  </script>
+</head>
+
+<body>
+  
+<div id="info">
+  
+</div>
+
+<script>
+</script>
+
+</body>
+</html>
